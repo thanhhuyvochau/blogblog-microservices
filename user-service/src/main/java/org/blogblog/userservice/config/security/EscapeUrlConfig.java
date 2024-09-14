@@ -11,8 +11,7 @@ public class EscapeUrlConfig {
     private static final List<EscapeUrl> escapeUrls = new ArrayList<>();
 
     static {
-        escapeUrls.add(new EscapeUrl("/api/jobs/hiring", "GET"));
-        escapeUrls.add(new EscapeUrl("/api/jobs/hiring/**", "GET"));
+        escapeUrls.add(new EscapeUrl("/auth/register", "POST"));
         escapeUrls.add(new EscapeUrl("api-docs/swagger-config", "GET"));
         escapeUrls.add(new EscapeUrl("/swagger-ui/**", "GET"));
         escapeUrls.add(new EscapeUrl("api-docs", "GET"));
@@ -31,6 +30,9 @@ public class EscapeUrlConfig {
 
     }
 
+    /**
+     * This method is used in case we want to control user route by own function (custom)
+     */
     public static boolean shouldBypassAuthentication(AntPathMatcher pathMatcher, String requestUri, String requestMethod) {
         return EscapeUrlConfig.getEscapeUrls().stream()
                 .anyMatch(escapeUrl -> pathMatcher.match(escapeUrl.getUrl(), requestUri) && escapeUrl.getMethod().equalsIgnoreCase(requestMethod));

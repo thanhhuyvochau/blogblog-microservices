@@ -51,6 +51,13 @@ public class ApiResponse<T> {
         return ret;
     }
 
+    public static <T> ApiResponse<T> failed(Integer errorCode, String errorMessage) {
+        ApiResponse<T> ret = new ApiResponse<>();
+        ret.statusCode = errorCode.toString();
+        ret.errorMessage = errorMessage;
+        return ret;
+    }
+
     public String getStatusCode() {
         return statusCode;
     }
