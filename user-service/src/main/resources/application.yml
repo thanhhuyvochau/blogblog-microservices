@@ -8,7 +8,7 @@ spring:
     multipart:
       max-file-size: 5MB
 jwt:
-  secret: jaklsdj1283e7osalkd
+  secret: YOpwYOb8kB04/1U5AUY7EsA7NXdHH8PQLwW/t/280idMbD2RUd+Mrzz7incpwSluLrCUadgo82GpSPUxeyIkXA==
   expiration: 36000 #10 * 60 * 60 (10 hours)
   longExpiration: 604800 #7 * 24 * 60 * 60 (7 days)
   defaultPassword: 123@456
