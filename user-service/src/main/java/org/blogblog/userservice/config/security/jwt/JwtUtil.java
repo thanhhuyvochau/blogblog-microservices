@@ -1,8 +1,11 @@
 package org.blogblog.userservice.config.security.jwt;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.blogblog.userservice.entities.User;
 import org.blogblog.userservice.entities.common.ApiException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,7 @@ import java.util.function.Function;
 public class JwtUtil implements Serializable {
 
     private static final long serialVersionUID = -2550185165626007488L;
+    private final ObjectMapper objectMapper;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -33,6 +37,10 @@ public class JwtUtil implements Serializable {
 
     @Value("${jwt.longExpiration}")
     private String longExpiration;
+
+    public JwtUtil(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
@@ -70,22 +78,26 @@ public class JwtUtil implements Serializable {
     }
 
     //generate token for user
-    public String generateToken(UserDetails userDetails, Boolean isRememberMe) {
+    public String generateToken(User user, Boolean isRememberMe) {
         Map<String, Object> claims = new HashMap<>();
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("MD5");
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(bos);
-            oos.writeObject(userDetails.getAuthorities());
+            oos.writeObject(user.getAuthorities());
             byte[] bytes = bos.toByteArray();
             messageDigest.update(bytes);
-//            String myHash = DatatypeConverter
-//                    .printHexBinary(messageDigest.digest()).toUpperCase();
-            claims.put("authorities", userDetails.getAuthorities());
+            Map<String, Object> userInfoMap = new HashMap<>();
+            userInfoMap.put("email", user.getEmail());
+            userInfoMap.put("firstName", user.getFirstName());
+            userInfoMap.put("lastName", user.getLastName());
+
+            claims.put("info", userInfoMap);
+            claims.put("authorities", user.getAuthorities());
         } catch (NoSuchAlgorithmException | IOException e) {
             throw new RuntimeException(e);
         }
-        return doGenerateToken(claims, userDetails.getUsername(), isRememberMe);
+        return doGenerateToken(claims, user.getEmail(), isRememberMe);
     }
 
     //while creating the token -
